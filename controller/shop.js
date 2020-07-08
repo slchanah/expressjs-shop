@@ -107,6 +107,27 @@ exports.getOrders = (req, res, next) => {
   });
 };
 
+exports.postOrder = (req, res, next) => {
+  req.user.getCart()
+    .then(cart => {
+      return cart.getProducts()
+    })
+    .then(products => {
+      return req.user.createOrder()
+        .then(order => {
+          order.addProducts(products.map(product => {
+            product.order_item = { quantity: product.cart_item.quantity }
+            return product
+          }))
+        })
+        .catch(err => { console.log(err) })
+    })
+    .then(result => {
+      res.redirect('/orders')
+    })
+    .catch(err => { console.log(err) })
+}
+
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',
