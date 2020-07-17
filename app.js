@@ -16,7 +16,7 @@ const flash = require('connect-flash')
 
 const app = express();
 
-const MONGODB_URI = 'mongodb+srv://ivan:a753951852@cluster0.y90jh.mongodb.net/shop?retryWrites=true&w=majority'
+const MONGODB_URI = 'mongodb+srv://ivan:<pw>@cluster0.y90jh.mongodb.net/shop?retryWrites=true&w=majority'
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
