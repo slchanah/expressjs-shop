@@ -13,10 +13,11 @@ const MongoDBStore = require('connect-mongodb-session')(session)
 const isAuth = require('./middleware/is-auth')
 const csrf = require('csurf')
 const flash = require('connect-flash')
+const mongodbUrl = require('./config/properties').MONGODB_URL
 
 const app = express();
 
-const MONGODB_URI = 'mongodb+srv://ivan:a753951852@cluster0.y90jh.mongodb.net/shop?retryWrites=true&w=majority'
+const MONGODB_URI = mongodbUrl
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions'
@@ -34,23 +35,28 @@ app.use(csrfProtection)
 app.use(flash())
 
 app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn
+    res.locals.csrfToken = req.csrfToken()
+    next()
+})
+
+app.use((req, res, next) => {
     if (req.session.user) {
         User.findById(req.session.user._id)
             .then(user => {
+                if (!user) {
+                    return next()
+                }
                 req.user = user
                 next()
             })
-            .catch(err => { console.log(err) })
+            .catch(err => {
+                next(new Error(err))
+            })
     }
     else {
         next()
     }
-})
-
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn
-    res.locals.csrfToken = req.csrfToken()
-    next()
 })
 
 app.use('/admin', isAuth, adminRoutes)
@@ -59,7 +65,17 @@ app.use(shopRouter)
 
 app.use(authRouter)
 
+// app.get('/500', errorController.get500)
+
 app.use(errorController.get404)
+
+app.use((err, req, res, next) => {
+    res.status(500).render('500', {
+        pageTitle: 'Errors',
+        path: '500',
+        isAuthenticated: req.session.isLoggedIn
+    })
+})
 
 mongoose.connect(MONGODB_URI)
     .then(result => {

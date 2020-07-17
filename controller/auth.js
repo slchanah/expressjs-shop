@@ -4,10 +4,11 @@ const nodemailer = require('nodemailer')
 const sendgridTransport = require('nodemailer-sendgrid-transport')
 const crypto = require('crypto')
 const { validationResult } = require('express-validator/check')
+const SENDGRID_KEY = require('../config/properties').SENDGRID_KEY
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
-        api_key: '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'
+        api_key: SENDGRID_KEY
     }
 }))
 
@@ -80,10 +81,14 @@ exports.postSignup = (req, res) => {
                 subject: 'Signup succeeded',
                 html: '<h1>Signed up successfully</h1>'
             })
-                .catch(err => console.log(err))
+                .catch(err => err)
             return res.redirect('/login')
         })
-        .catch(err => { console.log(err) })
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        })
 }
 
 exports.getSignup = (req, res) => {
@@ -131,11 +136,15 @@ exports.postResetPassword = (req, res) => {
                             subject: 'Password Reset',
                             html: `<p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to reset password</p>`
                         })
-                            .catch(err => console.log(err))
+                            .catch(err => err)
                     })
-                    .catch(err => { console.log(err) })
+                    .catch(err => err)
             })
-            .catch(err => { console.log(err) })
+            .catch(err => {
+                const error = new Error(err)
+                error.httpStatusCode = 500
+                return next(error)
+            })
     })
 }
 
@@ -153,7 +162,11 @@ exports.getNewPassword = (req, res) => {
                 resetToken: token
             })
         })
-        .catch(err => { console.log(err) })
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        })
 }
 
 exports.postNewPassword = (req, res) => {
@@ -176,5 +189,9 @@ exports.postNewPassword = (req, res) => {
         .then(result => {
             res.redirect('/login')
         })
-        .catch(err => { console.log(err) })
+        .catch(err => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        })
 }
