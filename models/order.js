@@ -8,22 +8,22 @@ const orderSchema = new Schema({
             {
                 product: {
                     type: Object,
-                    require: true
+                    required: true
                 },
                 quantity: {
                     type: Number,
-                    require: true
+                    required: true
                 }
             }
         ],
     user: {
-        name: {
+        email: {
             type: String,
-            require: true
+            required: true
         },
         userId: {
             type: Schema.Types.ObjectId,
-            require: true,
+            required: true,
             ref: 'User'
         }
     }

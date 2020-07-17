@@ -8,7 +8,8 @@ exports.getProducts = (req, res, next) => {
         {
           prods: products,
           pageTitle: 'All Products',
-          path: '/products'
+          path: '/products',
+
         })
     })
     .catch(err => {
@@ -23,7 +24,8 @@ exports.getProduct = (req, res) => {
       res.render('shop/product-detail', {
         pageTitle: product.title,
         product: product,
-        path: '/products'
+        path: '/products',
+
       })
     })
     .catch(err => { console.log(err) })
@@ -112,7 +114,7 @@ exports.postOrder = (req, res, next) => {
       const order = new Order({
         productData,
         user: {
-          name: user.name,
+          email: user.email,
           userId: user._id
         }
       })
