@@ -18,8 +18,8 @@ router.post(
             .trim()
             .isString()
             .isLength({ min: 3 }),
-        body('imageUrl', 'Invalid imageUrl')
-            .isURL(),
+        // body('imageUrl', 'Invalid imageUrl')
+        //     .isURL(),
         body('price', 'Invalid Price')
             .isFloat(),
         body('description', 'Invalid description')
@@ -35,8 +35,8 @@ router.post(
             .trim()
             .isString()
             .isLength({ min: 3 }),
-        body('imageUrl', 'Invalid imageUrl')
-            .isURL(),
+        // body('imageUrl', 'Invalid imageUrl')
+        //     .isURL(),
         body('price', 'Invalid price')
             .isFloat(),
         body('description', 'Invalid description')
