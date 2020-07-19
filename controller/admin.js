@@ -153,13 +153,13 @@ exports.getProducts = (req, res, next) => {
     })
 };
 
-exports.postDeleteProduct = (req, res) => {
-  const productId = req.body.productId
+exports.deleteProduct = (req, res, next) => {
+  const productId = req.params.productId
 
   Product.findOne({ _id: productId, userId: req.user._id.toString() })
     .then(product => {
       if (!product) {
-        return next(new Error('Product not found'))
+        return res.status(500).json({ message: "Failed" })
       }
 
       fileHepler.deleteFile(product.imageUrl)
@@ -167,11 +167,9 @@ exports.postDeleteProduct = (req, res) => {
     })
     .then(result => {
       console.log("DESTROYED!")
-      res.redirect('/admin/products')
+      res.status(200).json({ message: "Success!" })
     })
     .catch(err => {
-      const error = new Error(err)
-      error.httpStatusCode = 500
-      return next(error)
+      res.status(500).json({ message: "Failed" })
     })
 }
