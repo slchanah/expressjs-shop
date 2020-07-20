@@ -3,6 +3,8 @@ const Order = require('../models/order')
 const fs = require('fs')
 const path = require('path')
 const PDFDocument = require('pdfkit')
+const STRIPE_KEY = require('../config/properties').STRIPE_KEY
+const stripe = require('stripe')(STRIPE_KEY)
 
 const ITEMS_PER_PAGE = 1
 
@@ -246,5 +248,80 @@ exports.getInvoice = (req, res, next) => {
     })
     .catch(err => {
       next(err)
+    })
+}
+
+exports.getCheckout = (req, res, next) => {
+  let products
+  let total = 0
+
+  req.user
+    .populate('cart.items.productId', '-userId')
+    .execPopulate()
+    .then(user => {
+      products = user.cart.items.map(i => {
+        const product = i.productId
+        product.quantity = i.quantity
+        total += product.price * i.quantity
+        return product
+      })
+
+      return stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: products.map(p => {
+          return {
+            name: p.title,
+            description: p.description,
+            amount: p.price * 100,
+            currency: 'hkd',
+            quantity: p.quantity
+          }
+        }),
+        success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+        cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel',
+      })
+    })
+    .then(session => {
+      console.log()
+      res.render('shop/checkout', {
+        path: '/checkout',
+        pageTitle: 'Checkout',
+        products: products,
+        totalSum: total,
+        sessionId: session.id
+      })
+    })
+    .catch(err => {
+      const error = new Error(err)
+      error.httpStatusCode = 500
+      return next(error)
+    })
+}
+
+exports.getCheckoutSuccess = (req, res, next) => {
+  req.user
+    .populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+      const productData = user.cart.items.map(i => ({ product: { ...i.productId._doc }, quantity: i.quantity }))
+      const order = new Order({
+        productData,
+        user: {
+          email: user.email,
+          userId: user._id
+        }
+      })
+      return order.save()
+    })
+    .then(result => {
+      return req.user.clearCart()
+    })
+    .then(result => {
+      res.redirect('/orders')
+    })
+    .catch(err => {
+      const error = new Error(err)
+      error.httpStatusCode = 500
+      return next(error)
     })
 }

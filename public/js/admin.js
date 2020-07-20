@@ -15,7 +15,7 @@ const deleteProduct = btn => {
         })
         .then(data => {
             console.log(data)
-            productElement.parentNode.removeChild(productElement) // support IE. can just use remove function
+            productElement.parentNode.removeChild(productElement) // support IE. Can just use remove function in other browsers
         })
         .catch(err => {
             console.log(err)
