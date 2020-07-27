@@ -1,3 +1,6 @@
 node_modules
 config/properties.js
 images
+server.cert
+server.key
+access.log

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "NODE_ENV=production MONGO_USER=ivan MONGO_PW=a753951852 MONGO_DB=shop PORT=3000 SENDGRID_KEY=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 STRIPE_KEY=sk_test_51H6p4ZL7LWbwA7NYDDviw53JqgLtgzvY7IbEaYS0ZvQQGk7aIzlN3roC4pCLioYUvElBC9utxDtPQO8S1HvwKD5f00FtWiwnOQ node app.js",
+    "start:dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +14,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^2.3.3",
     "csurf": "^1.11.0",
@@ -21,8 +23,10 @@
     "express-handlebars": "^4.0.5",
     "express-session": "^1.17.1",
     "express-validator": "^6.6.0",
+    "helmet": "^3.23.3",
     "mongodb": "^3.5.9",
     "mongoose": "^5.9.23",
+    "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "mysql2": "^2.1.0",
     "nodemailer": "^6.4.10",
