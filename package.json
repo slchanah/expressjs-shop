@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": "12.18.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=production MONGO_USER=ivan MONGO_PW=a753951852 MONGO_DB=shop PORT=3000 SENDGRID_KEY=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 STRIPE_KEY=sk_test_51H6p4ZL7LWbwA7NYDDviw53JqgLtgzvY7IbEaYS0ZvQQGk7aIzlN3roC4pCLioYUvElBC9utxDtPQO8S1HvwKD5f00FtWiwnOQ node app.js",
