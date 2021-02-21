@@ -1,6 +1,8 @@
+# expressjs-ecommerce-example
+
 A e-commerce platform built with Express.js MVC architecture.
 
-url: https://dashboard.heroku.com/apps/node-expressjs-shop
+Demo: https://node-expressjs-shop.herokuapp.com/
 
 # Tech Stack
 - Express.js
